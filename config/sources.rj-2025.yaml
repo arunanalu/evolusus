@@ -1,0 +1,41 @@
+runtime:
+  output_root: data
+  user_agent: "EvoluSUS-academic-pilot/0.1 (FIAP; contact: naluaruna@gmail.com)"
+  connect_timeout_seconds: 15
+  read_timeout_seconds: 90
+retry:
+  max_attempts: 5
+  base_delay_seconds: 5
+  max_delay_seconds: 300
+  jitter_ratio: 0.20
+sources:
+  cnes_lt:
+    system: CNES
+    protocol: ftp
+    url_template: "ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/LT/LTRJ{yy}{mm}.dbc"
+    expected_format: dbc
+  cnes_pf:
+    system: CNES
+    protocol: ftp
+    url_template: "ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/PF/PFRJ{yy}{mm}.dbc"
+    expected_format: dbc
+  cnes_st:
+    system: CNES
+    protocol: ftp
+    url_template: "ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/ST/STRJ{yy}{mm}.dbc"
+    expected_format: dbc
+  sih_rd:
+    system: SIH
+    protocol: ftp
+    url_template: "ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/RDRJ{yy}{mm}.dbc"
+    expected_format: dbc
+  ibge_municipios:
+    system: IBGE
+    protocol: https
+    url_template: "https://servicodados.ibge.gov.br/api/v1/localidades/estados/33/municipios"
+    expected_format: json
+  ibge_populacao_2025:
+    system: IBGE
+    protocol: https
+    url_template: "https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/2025/variaveis/9324?localidades=N6[N3[33]]"
+    expected_format: json
