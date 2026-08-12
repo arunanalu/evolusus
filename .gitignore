@@ -1,0 +1,22 @@
+# Segredos e configuração local
+.env
+.env.*
+!.env.example
+secrets/
+
+# Artefatos temporários e caches
+.tmp-*/
+.cache/
+tmp/
+*.log
+
+# Estado local de infraestrutura
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Sistema/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
