@@ -8,7 +8,14 @@ secrets/
 .tmp-*/
 .cache/
 tmp/
+/data/*
+!/data/consolidated/
+/data/consolidated/*
+!/data/consolidated/README.md
 *.log
+__pycache__/
+*.py[cod]
+*.egg-info/
 
 # Estado local de infraestrutura
 *.tfstate
