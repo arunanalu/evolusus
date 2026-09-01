@@ -1,63 +1,64 @@
-# 012 — Visualização gratuita e compartilhável do IPH
+# 012 — Visualização do IPH no Looker Studio
 
-**Status:** demonstração recomendada com rótulo explícito `PRELIMINAR`.  
+**Status:** roteiro de demonstração com rótulo explícito `PRELIMINAR`.
 **Fonte inicial:** `data/gold_table/export.csv`.
 
-## Decisão recomendada
+## Objetivo
 
-Usar **Looker Studio** para a demonstração compartilhável com o professor. O conector oficial permite carregar diretamente um CSV e compartilhar o relatório por e-mail como visualizador; se o upload ainda não estiver habilitado na conta, usar Google Sheets como ponte. O conector Google Sheets conecta uma única aba do arquivo e permite compartilhar o relatório sem dar ao visualizador acesso de edição à planilha. [Upload CSV oficial](https://docs.cloud.google.com/looker/docs/studio/upload-csv-files-to-looker-studio), [conector Google Sheets](https://cloud.google.com/looker/docs/studio/connect-to-google-sheets) e [compartilhamento](https://cloud.google.com/looker/docs/studio/tutorial-view-and-share-your-report).
+Construir um painel interativo a partir da exportação Gold atual. O painel é demonstrativo: a Gold cobre 87 dos 92 municípios do RJ e o IPH ainda não foi validado como índice científico final.
 
-Como alternativa reproduzível, o repositório contém uma demonstração web estática em `docs/visualizacao/`. Ela será publicada gratuitamente por GitHub Pages depois que a equipe habilitar Pages no repositório. O site leva uma cópia controlada do CSV somente no artefato publicado; o dado-fonte continua em `data/gold_table/export.csv`. GitHub alerta que Pages pode tornar conteúdo público mesmo quando o repositório é privado; publicar somente após confirmar que a agregação municipal pode ser pública. [Documentação GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+## Roteiro de criação
 
-**Power BI não é a opção escolhida para esta apresentação:** Power BI Desktop é gratuito para criar, mas compartilhamento interativo normalmente exige Pro/PPU para autor e destinatário, exceto em capacidade Premium/Fabric compatível. [Requisitos de compartilhamento](https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-share-dashboards).
-
-## Roteiro imediato no Looker Studio
-
-1. Abrir Looker Studio com a conta institucional.
-2. Criar **Fonte de dados → CSV file upload** e selecionar `data/gold_table/export.csv`. Se o conector não aparecer, importar o CSV em Google Sheets e conectar a aba via conector Google Sheets.
-3. Configurar `CODIGO_MUNICIPIO_7D` como texto, ano/mês como número e criar `DATA_COMPETENCIA` com `DATE(ANO_COMPETENCIA, MES_COMPETENCIA, 1)`.
-4. Criar filtros `ANO_COMPETENCIA`, `MES_COMPETENCIA` e `NOME_MUNICIPIO`.
+1. Criar uma fonte de dados no Looker Studio com o conector **CSV file upload** e selecionar `data/gold_table/export.csv`.
+2. Configurar `CODIGO_MUNICIPIO_7D` como texto; `ANO_COMPETENCIA` e `MES_COMPETENCIA` como número; medidas, taxas e IPH como número decimal ou inteiro conforme a unidade.
+3. Criar `DATA_COMPETENCIA` como dimensão de data. Se `DATE(ANO_COMPETENCIA, MES_COMPETENCIA, 1)` não for suportada pela fonte, usar uma expressão `PARSE_DATE` que construa ano, mês e dia a partir dos campos numéricos.
+4. Criar controles de filtro para Ano, Mês e Município. O mês deve usar uma dimensão de exibição ordenável, por exemplo `01 - Janeiro` até `12 - Dezembro`.
 5. Criar os visuais abaixo:
 
-   | Visual | Campos | Objetivo |
-   |---|---|---|
-   | Série temporal | `DATA_COMPETENCIA`, média de `INDICE_PRESSAO_HOSPITALAR` | evolução estadual mensal |
-   | Ranking | `NOME_MUNICIPIO`, média de `INDICE_PRESSAO_HOSPITALAR` | comparação municipal, com filtro temporal |
-   | Dispersão | `LEITOS_POR_MIL_HAB`, `TAXA_OCUPACAO_PROXY_PCT`, tamanho por `TOTAL_INTERNACOES` | capacidade × pressão |
-   | Tabela de qualidade | município, mês, leitos, internações, IPH | evitar leitura de ausência como zero |
+   | Visual | Configuração |
+   |---|---|
+   | Série temporal | `DATA_COMPETENCIA` no eixo X; média de `INDICE_PRESSAO_HOSPITALAR` no eixo Y |
+   | Ranking | Município como dimensão; média de IPH como métrica; ordem decrescente; sem categoria agregada `Outros` |
+   | Dispersão | Município como dimensão; média de leitos SUS por mil habitantes no eixo X; média de uso estimado dos leitos no eixo Y; soma de internações como tamanho |
+   | Tabela detalhada | Município e competência como dimensões; leitos e internações como soma; indicadores de razão, taxa e IPH como média |
 
-6. Inserir no topo: **"Gold preliminar: cobertura de 87/92 municípios; IPH não validado."**
-7. Usar **Compartilhar → convidar e-mail institucional do professor → Pode visualizar**. Não habilitar link público sem confirmar a política institucional.
+6. Renomear os campos exibidos com linguagem clara:
 
-## Publicação da demonstração web do repositório
+   | Campo técnico | Nome exibido |
+   |---|---|
+   | `TOTAL_LEITOS_SUS` | Leitos SUS disponíveis |
+   | `TOTAL_INTERNACOES` | Internações no mês |
+   | `LEITOS_POR_MIL_HAB` | Leitos SUS por mil habitantes |
+   | `TAXA_OCUPACAO_PROXY_PCT` | Uso estimado dos leitos (%) |
+   | `INDICE_PRESSAO_HOSPITALAR` | IPH |
 
-1. Fazer push da branch que contém `docs/visualizacao/`.
-2. Em GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. Mesclar a branch na padrão ou executar manualmente o workflow `Deploy demonstration dashboard`.
-4. Compartilhar a URL gerada em **Settings → Pages**.
+## Avisos obrigatórios no painel
 
-O workflow publica somente o HTML e `data/gold_table/export.csv`. A página deixa visível o aviso de preliminariedade e não apresenta IPH como diagnóstico ou causalidade.
+Exibir o seguinte texto em local visível:
 
-### Mapa
+> **Dado preliminar:** a Gold atual cobre 87 dos 92 municípios do RJ. O IPH ainda não foi validado e não deve ser interpretado como diagnóstico, causalidade ou ranking definitivo.
 
-Não publicar mapa municipal antes de corrigir os cinco municípios ausentes e de incluir a dimensão geográfica oficial. Para a demonstração atual, ranking e série temporal são mais seguros.
+Usar a seguinte explicação para o indicador de utilização:
 
-## Uso de IA e JSON: o que é viável
+> **Uso estimado dos leitos:** estimativa baseada nos dias de permanência das internações e na quantidade de leitos SUS disponíveis no mês. Não representa ocupação observada diretamente em tempo real.
 
-| Necessidade | Melhor formato | Fluxo |
-|---|---|---|
-| Dashboard interativo compartilhável | Looker Studio | IA sugere layout/campos; equipe carrega CSV e compartilha por e-mail |
-| Gráfico reproduzível por copiar/colar | JSON Vega-Lite | IA gera especificação → colar no Vega Editor → validar contra CSV → exportar |
-| Demonstração pública reproduzível | HTML + JSON Vega-Lite + GitHub Pages | workflow publica o CSV e os gráficos |
-| Versionar uma solução Power BI já existente | PBIP/PBIR + JSON | criar primeiro no Desktop → salvar como projeto → revisar diffs JSON |
+## Faixas qualitativas exclusivamente demonstrativas
 
-Vega-Lite usa uma especificação JSON declarativa que pode descrever dados, transformações e gráficos. [Documentação](https://vega.github.io/vega-lite/docs/) e [Vega Editor](https://vega.github.io/editor/). Looker Studio não possui um formato JSON oficial de dashboard para colar; nele, a IA deve produzir o roteiro de configuração. Em Power BI, gerar JSON antes de existir um projeto é frágil.
+Aplicar as faixas obtidas pelos tercis dos 1.032 registros com IPH maior que zero no CSV atual:
+
+| IPH | Interpretação demonstrativa |
+|---:|---|
+| até 18,66 | Baixa pressão relativa |
+| 18,67 a 26,99 | Média pressão relativa |
+| 27,00 ou mais | Alta pressão relativa |
+
+O painel deve declarar que essas faixas são exploratórias, dependem da distribuição da amostra de 2025 e não são limites clínicos, regulatórios ou definitivos.
 
 ## Critérios de aceite
 
-- o CSV é lido em UTF-8 e códigos municipais preservam sete dígitos;
+- CSV lido em UTF-8 e códigos municipais preservados como texto;
 - filtros alteram todos os visuais relevantes;
-- nenhum gráfico apresenta IPH como diagnóstico, causalidade ou resultado final validado;
-- municípios sem cobertura são destacados, não tratados como pressão zero;
-- título, período e limitações ficam visíveis;
-- pelo menos uma visualização é conferida manualmente contra três linhas do CSV.
+- gráficos de dispersão usam médias para as taxas mensais, sem soma indevida de indicadores;
+- nenhum visual trata ausência de cobertura como IPH zero;
+- período, aviso preliminar e limitações ficam visíveis;
+- pelo menos três valores do painel são conferidos contra o CSV.
