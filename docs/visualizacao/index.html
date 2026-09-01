@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EvoluSUS — Demonstração IPH RJ/2025</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <style>
+      body { background:#f6f8fb; color:#172033; font:16px system-ui,sans-serif; margin:0; }
+      main { max-width:1200px; margin:auto; padding:28px 20px 48px; }
+      h1 { margin:0 0 6px; } .muted { color:#536176; }
+      .notice { background:#fff5d6; border-left:5px solid #bd7800; padding:14px; margin:20px 0; }
+      .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(360px,1fr)); gap:18px; }
+      .card { background:white; border-radius:10px; box-shadow:0 1px 5px #17203322; padding:14px; overflow:auto; }
+      footer { margin-top:26px; font-size:.9rem; color:#536176; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>EvoluSUS — demonstração IPH, RJ/2025</h1>
+      <p class="muted">Fonte: exportação Gold atual; competência mensal; perspectiva geográfica ainda não documentada na fonte.</p>
+      <div class="notice"><strong>Dado preliminar.</strong> A Gold cobre 87 de 92 municípios e o IPH ainda não foi validado. Não interpretar os gráficos como diagnóstico, causalidade ou ranking definitivo.</div>
+      <div class="grid"><section class="card"><div id="serie"></div></section><section class="card"><div id="ranking"></div></section><section class="card"><div id="dispersao"></div></section></div>
+      <footer>Indicadores de ocupação são proxy. Consulte o plano 011 para limitações e pendências.</footer>
+    </main>
+    <script>
+      const data = { url: "export.csv", format: { type: "csv" } };
+      const common = { width: 430, height: 260, data, config: { axis: { labelFontSize: 11, titleFontSize: 12 } } };
+      vegaEmbed("#serie", { ...common, title:"IPH médio por competência", transform:[{calculate:"toDate(datum.ANO_COMPETENCIA + '-' + datum.MES_COMPETENCIA + '-01')",as:"data"}], mark:{type:"line",point:true,color:"#005f73"}, encoding:{x:{field:"data",type:"temporal",title:"Mês"},y:{field:"INDICE_PRESSAO_HOSPITALAR",type:"quantitative",aggregate:"mean",title:"IPH médio"},tooltip:[{field:"data",type:"temporal",title:"Competência"},{field:"INDICE_PRESSAO_HOSPITALAR",type:"quantitative",aggregate:"mean",title:"IPH médio",format:".2f"},{field:"CODIGO_MUNICIPIO_7D",type:"quantitative",aggregate:"count",title:"Municípios"}]} }, {actions:false});
+      vegaEmbed("#ranking", { ...common, title:"IPH médio por município — 10 maiores", transform:[{aggregate:[{op:"mean",field:"INDICE_PRESSAO_HOSPITALAR",as:"iph_medio"}],groupby:["NOME_MUNICIPIO"]},{window:[{op:"rank",as:"posicao"}],sort:[{field:"iph_medio",order:"descending"}]},{filter:"datum.posicao <= 10"}], mark:{type:"bar",color:"#ca6702"}, encoding:{y:{field:"NOME_MUNICIPIO",type:"nominal",sort:"-x",title:null},x:{field:"iph_medio",type:"quantitative",title:"IPH médio"},tooltip:[{field:"NOME_MUNICIPIO",title:"Município"},{field:"iph_medio",title:"IPH médio",format:".2f"}]} }, {actions:false});
+      vegaEmbed("#dispersao", { ...common, title:"Capacidade e ocupação proxy", mark:{type:"circle",opacity:.65,color:"#0a9396"}, encoding:{x:{field:"LEITOS_POR_MIL_HAB",type:"quantitative",title:"Leitos SUS por mil hab."},y:{field:"TAXA_OCUPACAO_PROXY_PCT",type:"quantitative",title:"Ocupação proxy (%)"},size:{field:"TOTAL_INTERNACOES",type:"quantitative",title:"Internações"},tooltip:[{field:"NOME_MUNICIPIO",title:"Município"},{field:"MES_COMPETENCIA",title:"Mês"},{field:"LEITOS_POR_MIL_HAB",title:"Leitos/1.000 hab."},{field:"TAXA_OCUPACAO_PROXY_PCT",title:"Ocupação proxy (%)"},{field:"INDICE_PRESSAO_HOSPITALAR",title:"IPH"}]} }, {actions:false});
+    </script>
+  </body>
+</html>
