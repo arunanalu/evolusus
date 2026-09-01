@@ -36,7 +36,7 @@ Construir um painel interativo a partir da exportação Gold atual. O painel é 
 
 Exibir o seguinte texto em local visível:
 
-> **Cobertura atual:** a Gold contém 87 dos 92 municípios do RJ. O IPH não deve ser interpretado como diagnóstico, causalidade ou ranking definitivo.
+> **Cobertura atual:** a Gold contém 87 dos 92 municípios do RJ. O painel apresenta a leitura mensal do IPH, da capacidade instalada e da utilização hospitalar no período disponível.
 
 Usar a seguinte explicação para o indicador de utilização:
 
