@@ -6,7 +6,7 @@
 
 ## Resultado executivo
 
-A exportação demonstra que a aquisição, agregação mensal e os indicadores simples foram operacionalizados com coerência. Ela é apropriada como **resultado preliminar de ETL e protótipo de painel**. Não deve ainda ser apresentada como versão validada do Índice de Pressão Hospitalar (IPH), pois há lacunas de cobertura, uma regra temporal incorreta na proxy de ocupação e ausência de metadados necessários para reproduzir a fórmula.
+A exportação demonstra que a aquisição, agregação mensal e os indicadores simples foram operacionalizados com coerência. Ela é apropriada como **resultado de ETL e protótipo de painel**. Não deve ainda ser apresentada como versão validada do Índice de Pressão Hospitalar (IPH), pois há lacunas de cobertura, uma regra temporal incorreta na proxy de ocupação e ausência de metadados necessários para reproduzir a fórmula.
 
 ## Evidências verificadas
 
@@ -39,7 +39,7 @@ Os cinco municípios ausentes da Gold são: Cardoso Moreira (`3301157`), Iguaba 
 
 - Declarar explicitamente a perspectiva como `SERVICO` ou `POPULACAO`. Pelo uso de internações no município de atendimento, a hipótese é perspectiva de serviço, mas isso deve ser confirmado na transformação e no dicionário.
 - Exportar os componentes de capacidade/escassez, intensidade de utilização e tensão territorial, além do IPH. A tabela atual contém leitos e utilização, mas não UTI, profissionais FTE ou fluxo intermunicipal.
-- Não usar a mortalidade hospitalar para compor o IPH principal. Ela pode ser mantida como desfecho distinto; a validação externa requer SIM, com vintage e marca `PRELIMINAR` ou `FINAL`.
+- Não usar a mortalidade hospitalar para compor o IPH principal. Ela pode ser mantida como desfecho distinto; a validação externa requer SIM com versão e situação de publicação registradas.
 - Investigar as colunas de raça/cor, todas zeradas, e a diferença entre população total e a soma de homens e mulheres. Não usar esses campos para ajuste até reconciliação com a fonte IBGE.
 
 ## Contrato mínimo da próxima Gold
@@ -59,4 +59,3 @@ A consolidação anual deve ser recalculada pelos numeradores e denominadores me
 - fórmula e componentes do IPH reproduzíveis e versionados;
 - reconciliação documentada de uma amostra de totais CNES e SIH;
 - teste de sensibilidade dos pesos, normalização e tratamento de ausências antes de qualquer ranking público.
-

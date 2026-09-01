@@ -1,6 +1,6 @@
 # 012 — Visualização do IPH no Looker Studio
 
-**Status:** roteiro de demonstração com rótulo explícito `PRELIMINAR`.
+**Status:** roteiro de demonstração.
 **Fonte inicial:** `data/gold_table/export.csv`.
 
 ## Objetivo
@@ -36,7 +36,7 @@ Construir um painel interativo a partir da exportação Gold atual. O painel é 
 
 Exibir o seguinte texto em local visível:
 
-> **Dado preliminar:** a Gold atual cobre 87 dos 92 municípios do RJ. O IPH ainda não foi validado e não deve ser interpretado como diagnóstico, causalidade ou ranking definitivo.
+> **Cobertura atual:** a Gold contém 87 dos 92 municípios do RJ. O IPH não deve ser interpretado como diagnóstico, causalidade ou ranking definitivo.
 
 Usar a seguinte explicação para o indicador de utilização:
 
@@ -60,5 +60,5 @@ O painel deve declarar que essas faixas são exploratórias, dependem da distrib
 - filtros alteram todos os visuais relevantes;
 - gráficos de dispersão usam médias para as taxas mensais, sem soma indevida de indicadores;
 - nenhum visual trata ausência de cobertura como IPH zero;
-- período, aviso preliminar e limitações ficam visíveis;
+- período, cobertura e limitações ficam visíveis;
 - pelo menos três valores do painel são conferidos contra o CSV.
